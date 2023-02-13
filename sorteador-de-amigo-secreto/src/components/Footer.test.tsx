@@ -1,9 +1,24 @@
-import { render, screen } from "@testing-library/react";
 import React from "react";
-import { RecoilRoot } from "recoil";
 import Footer from "./Footer";
+import { RecoilRoot } from "recoil";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { useListaDeParticipantes } from "../state/hooks/useListaDeParticipantes";
 
-describe("Onde não existem participantes suficientes", () => {
+jest.mock("../state/hooks/useListaDeParticipantes", () => {
+  return {
+    useListaDeParticipantes: jest.fn(),
+  };
+});
+
+const mockNavigate = jest.fn();
+
+jest.mock("react-router-dom", () => {
+  return {
+    useNavigate: () => mockNavigate,
+  };
+});
+
+describe("Quando não existem participantes suficientes", () => {
   test("A brincadeira não pode ser iniciada", () => {
     render(
       <RecoilRoot>
@@ -12,5 +27,37 @@ describe("Onde não existem participantes suficientes", () => {
     );
     const button = screen.getByRole("button");
     expect(button).toBeDisabled();
+  });
+});
+
+describe("Quando existem participantes suficientes", () => {
+  beforeEach(() => {
+    (useListaDeParticipantes as jest.Mock).mockReturnValue([
+      "Ana",
+      "Catarina",
+      "José",
+    ]);
+  });
+
+  test("A brincadeira pode ser iniciada", () => {
+    render(
+      <RecoilRoot>
+        <Footer />
+      </RecoilRoot>
+    );
+    const button = screen.getByRole("button");
+    expect(button).not.toBeDisabled();
+  });
+
+  test("A brincadeira foi iniciada", () => {
+    render(
+      <RecoilRoot>
+        <Footer />
+      </RecoilRoot>
+    );
+    const button = screen.getByRole("button");
+    fireEvent.click(button);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith("/sorteio");
   });
 });
