@@ -42,8 +42,8 @@ const Sorteio = () => {
         )}
         <footer className="sorteio">
           <img
-            src="/public/imagens/aviao.png"
             className="aviao"
+            src="/images/aviao.png"
             alt="Um desenho de um avião de papel"
           />
         </footer>

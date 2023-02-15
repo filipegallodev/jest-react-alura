@@ -11,7 +11,7 @@ const Header = () => {
       ></div>
       <img
         className="participante"
-        src="/public/images/participante.png"
+        src="/images/participante.png"
         alt="Participante com um presente na mão"
       />
     </header>
